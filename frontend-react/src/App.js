@@ -1,6 +1,7 @@
 import './App.css'
 
 import React, { Component } from 'react';
+import GenreSelect from './GenreSelect.js';
 import RangeSlider from './RangeSlider';
 
 
@@ -12,6 +13,26 @@ class App extends Component {
       currentMovie: null,
       sliderValue: [0.5, 5],
       searchVal: "",
+      genres: [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Childrens",
+        "Comedy",
+        "Crime",
+        "Documentary",
+        "Drama",
+        "Fantasy",
+        "Film-Noir",
+        "Horror",
+        "Musical",
+        "Mystery",
+        "Romance",
+        "Sci-Fi",
+        "Thriller",
+        "War",
+        "Western"
+      ],
     };
 
     // this.Row = this.Row.bind(this);
@@ -46,6 +67,16 @@ class App extends Component {
     this.setState({sliderValue: value});
   }
 
+  handleGenreChange = (event) => {
+    let genres = [...this.state.genres];
+    if (event.target.checked) {
+      genres.push(event.target.name)
+    } else {
+      genres = genres.filter(item => item !== event.target.name)
+    }
+    this.setState({genres: genres});
+  };
+
   clearSearchButton() {
     return (
       <input type="submit" value="Clear" onClick={this.handleClearButtonClick}/>
@@ -71,6 +102,9 @@ class App extends Component {
         </div>
         <div className="ScoreRange">
           <RangeSlider handleSliderChange={this.handleSliderChange}></RangeSlider>
+        </div>
+        <div className="Genres">
+          <GenreSelect handleGenreChange={this.handleGenreChange}></GenreSelect>
         </div>
         <pre>state = {JSON.stringify(this.state, undefined, '  ')}</pre>
       </div>
