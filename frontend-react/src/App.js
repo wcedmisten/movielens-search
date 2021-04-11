@@ -55,7 +55,18 @@ class App extends Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    fetch(`/api/search?search_val=${this.state.searchVal}`)
+    var url = new URL(`/api/search`, 'http://localhost:8090/')
+
+    var params = {
+      search_val:this.state.searchVal,
+      min_rating:this.state.sliderValue[0],
+      max_rating:this.state.sliderValue[1],
+      genres: JSON.stringify(this.state.genres)
+    }
+
+    url.search = new URLSearchParams(params).toString();
+
+    fetch(url)
       .then((res) => res.json())
       .then((data) => {
         this.setState({ movies: data });
