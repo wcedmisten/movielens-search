@@ -2,13 +2,12 @@ version: "3.7"
 
 services:
   db:
-    image: mariadb:10.5.8
+    image: postgres:12.6
     environment:
-      - MYSQL_ROOT_PASSWORD=testpass
-      - MYSQL_DATABASE=challenge
+      - POSTGRES_PASSWORD=testpass
     volumes:
-      - devmysqldb:/var/lib/mysql
       - ./db/sql:/docker-entrypoint-initdb.d
+      - ./db/ml-latest-small:/dataset
     
   backend:
     build: backend-python
