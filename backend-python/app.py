@@ -6,12 +6,20 @@ app = flask.Flask(__name__)
 db = psycopg2.connect("user=postgres password=testpass host=db")
 
 
-@app.route("/test")
+@app.route("/api/movies")
 def test():
     with db.cursor() as cur:
-        cur.execute("SELECT title FROM movies;")
-        (result,) = cur.fetchone()
+        cur.execute("SELECT id, title FROM movies;")
+        result = cur.fetchmany(10)
         return flask.jsonify(dict(result=result, backend="python"))
+
+@app.route("/api/search", methods = ['GET'])
+def search():
+    with db.cursor() as cur:
+        search_string = str(flask.request.args['search_val'])
+        cur.execute("""SELECT title FROM movies ORDER BY SIMILARITY(title, %s) DESC LIMIT 10;""", (search_string,))
+        result = cur.fetchmany(10)
+        return flask.jsonify(dict(result=result))
 
 
 @app.cli.command("load-movielens")
