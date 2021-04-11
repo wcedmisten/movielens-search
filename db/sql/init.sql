@@ -7,6 +7,12 @@ CREATE TABLE ratings (user_id int, movie_id int, rating decimal, epoch_timestamp
 
 \copy ratings FROM '/dataset/ratings.csv' delimiter ',' CSV HEADER ;
 
+-- creates a view for the average rating of each movie
+CREATE VIEW avg_ratings (movie_id, avg_rating)
+AS SELECT movie_id, AVG(rating)
+FROM ratings
+GROUP BY movie_id;
+
 CREATE TABLE tags (user_id int, movie_id int, tag varchar, epoch_timestamp int,
     CONSTRAINT fk_movie_id FOREIGN KEY(movie_id) REFERENCES movies(id)
 );
