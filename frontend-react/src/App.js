@@ -1,4 +1,8 @@
+import './App.css'
+
 import React, { Component } from 'react';
+import RangeSlider from './RangeSlider';
+
 
 class App extends Component {
   constructor(props) {
@@ -6,12 +10,14 @@ class App extends Component {
     this.state = {
       movies: [],
       currentMovie: null,
+      sliderValue: [0.5, 5],
       searchVal: "",
     };
 
     // this.Row = this.Row.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSliderChange = this.handleSliderChange.bind(this);
     // this.handleClearButtonClick = this.handleClearButtonClick.bind(this);
   }
 
@@ -36,10 +42,18 @@ class App extends Component {
       .catch(console.log);
   }
 
+  handleSliderChange(event, value) {
+    this.setState({sliderValue: value});
+  }
+
   clearSearchButton() {
     return (
       <input type="submit" value="Clear" onClick={this.handleClearButtonClick}/>
     );
+  }
+
+  valuetext(value) {
+    return `${value}°C`;
   }
 
   render() {
@@ -54,6 +68,9 @@ class App extends Component {
             <input type="submit" value="Search" />
             {this.state.searchVal != "" && this.clearSearchButton()}
           </form>
+        </div>
+        <div className="ScoreRange">
+          <RangeSlider handleSliderChange={this.handleSliderChange}></RangeSlider>
         </div>
         <pre>state = {JSON.stringify(this.state, undefined, '  ')}</pre>
       </div>
