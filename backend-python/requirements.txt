@@ -1,2 +1,2 @@
 flask
-PyMySQL
+psycopg2-binary

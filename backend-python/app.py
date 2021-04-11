@@ -1,20 +1,15 @@
 import click
 import flask
-import pymysql
+import psycopg2
 
 app = flask.Flask(__name__)
-db = pymysql.connect(
-    user="root",
-    password="testpass",
-    host="db",
-    database="challenge",
-)
+db = psycopg2.connect("user=postgres password=testpass host=db")
 
 
 @app.route("/test")
 def test():
     with db.cursor() as cur:
-        cur.execute("SELECT col FROM test;")
+        cur.execute("SELECT title FROM movies;")
         (result,) = cur.fetchone()
         return flask.jsonify(dict(result=result, backend="python"))
 
