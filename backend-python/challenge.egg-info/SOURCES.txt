@@ -1,0 +1,5 @@
+setup.py
+challenge.egg-info/PKG-INFO
+challenge.egg-info/SOURCES.txt
+challenge.egg-info/dependency_links.txt
+challenge.egg-info/top_level.txt
