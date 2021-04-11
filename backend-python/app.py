@@ -22,6 +22,15 @@ def test():
         result = cur.fetchmany(10)
         return flask.jsonify(dict(result=result, backend="python"))
 
+
+def result_to_dict(result):
+    return list(map(lambda item: {
+        'id': item[0],
+        'title': item[1],
+        'genres': item[2],
+        'avg_rating': item[3]
+    }, result))
+
 @app.route("/api/search", methods = ['GET'])
 def search():
     search_string = str(flask.request.args['search_val'])
@@ -36,44 +45,37 @@ def search():
     # for now, this is reasonably performant at this scale
     query_regex = ".*" + ".*|.*".join(genres_list) + ".*"
 
+    base_query =    ("SELECT " 
+                    "movies.id, movies.title, movies.genres, avg_ratings.avg_rating  "
+                    "FROM "
+                    "movies "
+                    "INNER JOIN avg_ratings ON movies.id = avg_ratings.movie_id "
+                    "WHERE "
+                    "avg_ratings.avg_rating >= %s and avg_ratings.avg_rating <= %s "
+                    "AND "
+                    "movies.genres ~ %s ")
+
     # order by rating if the search query is empty
     if search_string == "":
         with db.cursor(cursor_factory = psycopg2.extras.DictCursor) as cur:
             cur.execute(
-                            "SELECT " 
-                            "movies.id, movies.title, movies.genres, avg_ratings.avg_rating  "
-                            "FROM "
-                            "movies "
-                            "INNER JOIN avg_ratings ON movies.id = avg_ratings.movie_id "
-                            "WHERE "
-                            "avg_ratings.avg_rating >= %s and avg_ratings.avg_rating <= %s "
-                            "AND "
-                            "movies.genres ~ %s "
-                            "ORDER BY avg_ratings.avg_rating LIMIT 10;",
+                            base_query +
+                            "ORDER BY avg_ratings.avg_rating DESC LIMIT 10;",
                             (float(min_rating), float(max_rating), query_regex,)
                         )
             result = cur.fetchmany(10)
-            print(result)
-            return flask.json.dumps(dict(result=result), default=decimal_default)
+            return flask.json.dumps(result_to_dict(result), default=decimal_default)
     # otherwise, order by search closeness
     else:
         with db.cursor(cursor_factory = psycopg2.extras.DictCursor) as cur:
             cur.execute(
-                            "SELECT " 
-                            "movies.id, movies.title, movies.genres, avg_ratings.avg_rating  "
-                            "FROM "
-                            "movies "
-                            "INNER JOIN avg_ratings ON movies.id = avg_ratings.movie_id "
-                            "WHERE "
-                            "avg_ratings.avg_rating >= %s and avg_ratings.avg_rating <= %s "
-                            "AND "
-                            "movies.genres ~ %s "
+                            base_query +
                             "ORDER BY SIMILARITY(title, %s) DESC LIMIT 10;",
                             (float(min_rating), float(max_rating), query_regex, search_string,)
                         )
             result = cur.fetchmany(10)
-            print(result)
-            return flask.json.dumps(dict(result=result), default=decimal_default)
+
+            return flask.json.dumps(result_to_dict(result), default=decimal_default)
 
 
 

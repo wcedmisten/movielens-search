@@ -3,6 +3,7 @@ import './App.css'
 import React, { Component } from 'react';
 import GenreSelect from './GenreSelect.js';
 import RangeSlider from './RangeSlider';
+import MovieList from './MovieList.js';
 
 
 class App extends Component {
@@ -35,7 +36,7 @@ class App extends Component {
       ],
     };
 
-    // this.Row = this.Row.bind(this);
+    this.getMovies = this.getMovies.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSliderChange = this.handleSliderChange.bind(this);
@@ -98,6 +99,10 @@ class App extends Component {
     return `${value}°C`;
   }
 
+  getMovies() {
+    return this.state.movies
+  }
+
   render() {
     return (
       <div>
@@ -116,6 +121,9 @@ class App extends Component {
         </div>
         <div className="Genres">
           <GenreSelect handleGenreChange={this.handleGenreChange}></GenreSelect>
+        </div>
+        <div className="MovieList">
+          <MovieList movies={this.getMovies()}></MovieList>
         </div>
         <pre>state = {JSON.stringify(this.state, undefined, '  ')}</pre>
       </div>
