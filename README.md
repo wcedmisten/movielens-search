@@ -1,6 +1,6 @@
-# challenge-eng-base
+# Movie Lens Search
 
-This starter kit supports `React` for the frontend and `Python`for the backend.
+This project uses `React` for the frontend and `Python`for the backend.
 
 To get the project up and running:
 1. Install Docker https://docs.docker.com/engine/installation/
@@ -20,7 +20,7 @@ To restart the project:
     docker-compose down
     docker-compose up backend or docker-compose up backend site
 
-Starting the backend service automatically starts the mariadb database service
+Starting the backend service automatically starts the postgreSQL database service
 as a dependency.
 
 To see schema changes in the db, remove the old db volume by adding `-v` when
@@ -31,11 +31,14 @@ stopping:
 If you run into issues connecting to the db on startup, try restarting (without
 the `-v` flag).
 
-
 Code changes should trigger live reload of the docker services in the docker
 containers by way of the volume binds specified in the compose file.
 
-TODOs:
+## Screenshot
+
+![Screenshot of the main page](./screenshot.png?raw=true)
+
+## TODO
 
 * Add integration tests
 * Add frontend unit tests
