@@ -6,6 +6,8 @@ import RangeSlider from './RangeSlider';
 import MovieList from './MovieList.js';
 import MovieView from './MovieView.js';
 
+import Grid from '@material-ui/core/Grid';
+
 
 class App extends Component {
   constructor(props) {
@@ -78,7 +80,7 @@ class App extends Component {
     this.searchBar.value = "";
     // use callback to guarantee set is state before searching
     this.setState(
-      { searchVal: null },
+      { searchVal: "" },
       this.search
     );
   }
@@ -124,9 +126,19 @@ class App extends Component {
     return this.state.movies
   }
 
+  movieListCondition() {
+    if (this.state.movies != null) {
+      return <Grid className="MovieList" item xs={12}>
+        <MovieList count={Math.ceil(this.state.searchCount / 10 )} page={this.state.page} movies={this.getMovies()} clickHandler={this.updateCurrentMovie} onPageChange={this.onPageChange}></MovieList>
+      </Grid>
+    }
+  }
+
   movieViewCondition() {
     if (this.state.currentMovie != null) {
-      return <MovieView movie={this.state.currentMovie}></MovieView>
+      return <Grid className="MovieView" item xs={12} sm={6}>
+          <MovieView movie={this.state.currentMovie}></MovieView>
+        </Grid>
     }
   }
 
@@ -140,27 +152,36 @@ class App extends Component {
   render() {
     return (
       <div>
-        <h1>Search Movies</h1>
-        <div className="Search">
-          <form onSubmit={this.handleSubmit}>
-            <label>
-              <input type="text" value={this.state.searchVal} ref={el => this.searchBar = el} onChange={this.handleChange} />
-            </label>
-            <input type="submit" value="Search" />
-            {this.state.searchVal != "" && this.clearSearchButton()}
-          </form>
-        </div>
-        <div className="ScoreRange">
-          <RangeSlider handleSliderChange={this.handleSliderChange}></RangeSlider>
-        </div>
-        <div className="Genres">
-          <GenreSelect handleGenreChange={this.handleGenreChange}></GenreSelect>
-        </div>
-        <div className="MovieList">
-          <MovieList count={Math.ceil(this.state.searchCount / 10 )} page={this.state.page} movies={this.getMovies()} clickHandler={this.updateCurrentMovie} onPageChange={this.onPageChange}></MovieList>
-        </div>
-        {this.movieViewCondition()}
-        <pre>state = {JSON.stringify(this.state, undefined, '  ')}</pre>
+        <Grid container 
+          direction="row"
+          alignContent="center"
+          alignItems="center"
+          justify="center"
+          spacing={1}>
+          <Grid className="Search" item xs={12} sm={6}>
+            <h1>Search Movies</h1>
+            <div className="SearchBar">
+              <form onSubmit={this.handleSubmit}>
+                <label>
+                  <input type="text" value={this.state.searchVal} ref={el => this.searchBar = el} onChange={this.handleChange} />
+                </label>
+                <input type="submit" value="Search" />
+                {this.state.searchVal != "" && this.clearSearchButton()}
+              </form>
+            </div>
+            <div className="ScoreRange">
+              <RangeSlider handleSliderChange={this.handleSliderChange}></RangeSlider>
+            </div>
+            <div className="Genres">
+              <GenreSelect handleGenreChange={this.handleGenreChange}></GenreSelect>
+            </div>
+          </Grid>
+          
+          {this.movieViewCondition()}
+          {this.movieListCondition()}
+          
+        </Grid>
+        {/* <pre>state = {JSON.stringify(this.state, undefined, '  ')}</pre> */}
       </div>
     );
   }
