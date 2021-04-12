@@ -34,3 +34,12 @@ the `-v` flag).
 
 Code changes should trigger live reload of the docker services in the docker
 containers by way of the volume binds specified in the compose file.
+
+TODOs:
+
+* Add integration tests
+* Add frontend unit tests
+* Handle genre strings better (normalize database to remove hacky regex search)
+* Parse year from movie title to store separately
+* Parse and display user tag data
+* Clean up frontend styling
