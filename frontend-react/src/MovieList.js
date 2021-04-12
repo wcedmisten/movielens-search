@@ -21,7 +21,7 @@ export default function MovieList(props) {
                     <p>{movie.rating}</p>
                     {drawStars(movie.avg_rating)}
                 </div>
-          </ListItem>
+            </ListItem>
         )
     }
 
@@ -29,6 +29,6 @@ export default function MovieList(props) {
         <List>
             {getMoviesList()}
         </List>
-        <Pagination onChange={props.onPageChange} count={10} variant="outlined" color="primary" />
+        <Pagination page={props.page} onChange={props.onPageChange} count={props.count} variant="outlined" color="primary" />
     </div>
 }

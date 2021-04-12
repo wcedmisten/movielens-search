@@ -85,7 +85,10 @@ class App extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    this.search();
+    this.setState(
+      { page: 1 },
+      this.search
+    );
   }
 
   updateCurrentMovie = (id) => {
@@ -154,7 +157,7 @@ class App extends Component {
           <GenreSelect handleGenreChange={this.handleGenreChange}></GenreSelect>
         </div>
         <div className="MovieList">
-          <MovieList movies={this.getMovies()} clickHandler={this.updateCurrentMovie} onPageChange={this.onPageChange}></MovieList>
+          <MovieList count={Math.ceil(this.state.searchCount / 10 )} page={this.state.page} movies={this.getMovies()} clickHandler={this.updateCurrentMovie} onPageChange={this.onPageChange}></MovieList>
         </div>
         {this.movieViewCondition()}
         <pre>state = {JSON.stringify(this.state, undefined, '  ')}</pre>
