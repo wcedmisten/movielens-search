@@ -78,6 +78,38 @@ def search():
             return flask.json.dumps(result_to_dict(result), default=decimal_default)
 
 
+def movie_id_result_to_dict(item):
+    return {
+        'id': item[0],
+        'title': item[1],
+        'genres': item[2],
+        'avg_rating': item[3],
+        'imdb_id': item[4],
+        'tmdb_id': item[5]
+    }
+
+@app.route("/api/movie/<id>", methods = ['GET'])
+def movie(id):
+    base_query =    ("SELECT " 
+                    "movies.id, movies.title, movies.genres, avg_ratings.avg_rating, links.imdb_id, links.tmdb_id "
+                    "FROM "
+                    "movies "
+                    "INNER JOIN avg_ratings ON movies.id = avg_ratings.movie_id "
+                    "INNER JOIN links ON movies.id = links.movie_id "
+                    "WHERE "
+                    "movies.id = %s ")
+
+    with db.cursor(cursor_factory = psycopg2.extras.DictCursor) as cur:
+        cur.execute(
+                        base_query,
+                        (id,)
+                    )
+        result = cur.fetchone()
+
+        return flask.json.dumps(movie_id_result_to_dict(result), default=decimal_default)
+
+    
+
 
 @app.cli.command("load-movielens")
 def load_movielens():

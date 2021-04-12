@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import GenreSelect from './GenreSelect.js';
 import RangeSlider from './RangeSlider';
 import MovieList from './MovieList.js';
+import MovieView from './MovieView.js';
 
 
 class App extends Component {
@@ -18,7 +19,7 @@ class App extends Component {
         "Action",
         "Adventure",
         "Animation",
-        "Childrens",
+        "Children's",
         "Comedy",
         "Crime",
         "Documentary",
@@ -40,14 +41,7 @@ class App extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSliderChange = this.handleSliderChange.bind(this);
-    // this.handleClearButtonClick = this.handleClearButtonClick.bind(this);
   }
-
-  // when an item in the list has been clicked, set the state to indicate we want to show it
-  // handleClick(Id) {
-  //   const clickedMovie = this.state.movies.find((movie) => movie.Id === Id);
-  //   this.setState({ currentMovie: clickedMovie });
-  // }
 
   handleChange(event) {
     this.setState({searchVal: event.target.value});
@@ -75,6 +69,15 @@ class App extends Component {
       .catch(console.log);
   }
 
+  updateCurrentMovie = (id) => {
+    fetch(`/api/movie/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ currentMovie: data });
+      })
+      .catch(console.log);
+  }
+
   handleSliderChange(event, value) {
     this.setState({sliderValue: value});
   }
@@ -95,12 +98,14 @@ class App extends Component {
     );
   }
 
-  valuetext(value) {
-    return `${value}°C`;
-  }
-
   getMovies() {
     return this.state.movies
+  }
+
+  movieViewCondition() {
+    if (this.state.currentMovie != null) {
+      return <MovieView movie={this.state.currentMovie}></MovieView>
+    }
   }
 
   render() {
@@ -123,8 +128,9 @@ class App extends Component {
           <GenreSelect handleGenreChange={this.handleGenreChange}></GenreSelect>
         </div>
         <div className="MovieList">
-          <MovieList movies={this.getMovies()}></MovieList>
+          <MovieList movies={this.getMovies()} handler={this.updateCurrentMovie}></MovieList>
         </div>
+        {this.movieViewCondition()}
         <pre>state = {JSON.stringify(this.state, undefined, '  ')}</pre>
       </div>
     );
