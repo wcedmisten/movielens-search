@@ -10,11 +10,9 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
-//   formControl: {
-//     margin: theme.spacing(3),
-//   },
 }));
 
+// module to enumerate all genres and provide a checkbox for including them in search
 export default function GenreSelect(props) {
   const classes = useStyles();
 

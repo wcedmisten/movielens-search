@@ -1,5 +1,6 @@
 import { drawStars } from './Utils.js'
 
+// module that shows details for a specific movie, when clicked from search results
 export default function MovieView(props) {
     return <div>
             <h1>{props.movie.title}</h1>

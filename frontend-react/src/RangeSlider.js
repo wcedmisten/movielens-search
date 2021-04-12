@@ -13,6 +13,7 @@ function valuetext(value) {
 return `${value} / 5`;
 }
 
+// module that provides a double ended slider for filtering average score
 export default function RangeSlider(props) {
     const classes = useStyles();
 

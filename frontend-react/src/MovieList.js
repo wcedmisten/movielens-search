@@ -7,6 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import MovieIcon from '@material-ui/icons/Movie';
 import { Pagination } from '@material-ui/lab';
 
+// module that displays search results for movies
 export default function MovieList(props) {
     function getMoviesList() {
         return props.movies.map(movie =>
