@@ -34,7 +34,7 @@ export default function GenreSelect(props) {
             label="Animation"
           />
           <FormControlLabel
-            control={<Checkbox defaultChecked={true}  onChange={props.handleGenreChange} name="Children's" />}
+            control={<Checkbox defaultChecked={true}  onChange={props.handleGenreChange} name="Children" />}
             label="Children's"
           />
           <FormControlLabel

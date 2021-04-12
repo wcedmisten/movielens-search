@@ -19,7 +19,7 @@ class App extends Component {
         "Action",
         "Adventure",
         "Animation",
-        "Children's",
+        "Children",
         "Comedy",
         "Crime",
         "Documentary",
@@ -35,28 +35,30 @@ class App extends Component {
         "War",
         "Western"
       ],
+      page: 1
     };
 
     this.getMovies = this.getMovies.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleClearButtonClick = this.handleClearButtonClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSliderChange = this.handleSliderChange.bind(this);
+    this.onPageChange = this.onPageChange.bind(this);
   }
 
   handleChange(event) {
     this.setState({searchVal: event.target.value});
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
-
+  search() {
     var url = new URL(`/api/search`, 'http://localhost:8090/')
 
     var params = {
       search_val:this.state.searchVal,
       min_rating:this.state.sliderValue[0],
       max_rating:this.state.sliderValue[1],
-      genres: JSON.stringify(this.state.genres)
+      genres: JSON.stringify(this.state.genres),
+      page: this.state.page
     }
 
     url.search = new URLSearchParams(params).toString();
@@ -64,9 +66,26 @@ class App extends Component {
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        this.setState({ movies: data });
+        this.setState({
+          movies: data.results,
+          searchCount: data.count
+        });
       })
       .catch(console.log);
+  }
+
+  handleClearButtonClick() {
+    this.searchBar.value = "";
+    // use callback to guarantee set is state before searching
+    this.setState(
+      { searchVal: null },
+      this.search
+    );
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    this.search();
   }
 
   updateCurrentMovie = (id) => {
@@ -108,6 +127,13 @@ class App extends Component {
     }
   }
 
+  onPageChange(event, page) {
+    this.setState(
+      { page: page },
+      this.search
+    );
+  }
+
   render() {
     return (
       <div>
@@ -128,7 +154,7 @@ class App extends Component {
           <GenreSelect handleGenreChange={this.handleGenreChange}></GenreSelect>
         </div>
         <div className="MovieList">
-          <MovieList movies={this.getMovies()} handler={this.updateCurrentMovie}></MovieList>
+          <MovieList movies={this.getMovies()} clickHandler={this.updateCurrentMovie} onPageChange={this.onPageChange}></MovieList>
         </div>
         {this.movieViewCondition()}
         <pre>state = {JSON.stringify(this.state, undefined, '  ')}</pre>

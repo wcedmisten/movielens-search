@@ -10,7 +10,7 @@ import { Pagination } from '@material-ui/lab';
 export default function MovieList(props) {
     function getMoviesList() {
         return props.movies.map(movie =>
-            <ListItem button={true} key={movie.id} onClick={() => props.handler(movie.id)}>
+            <ListItem button={true} key={movie.id} onClick={() => props.clickHandler(movie.id)}>
                 <ListItemIcon>
                     <MovieIcon/>
                 </ListItemIcon>
@@ -21,7 +21,6 @@ export default function MovieList(props) {
                     <p>{movie.rating}</p>
                     {drawStars(movie.avg_rating)}
                 </div>
-            
           </ListItem>
         )
     }
@@ -30,6 +29,6 @@ export default function MovieList(props) {
         <List>
             {getMoviesList()}
         </List>
-        <Pagination count={10} variant="outlined" color="primary" />
+        <Pagination onChange={props.onPageChange} count={10} variant="outlined" color="primary" />
     </div>
 }
