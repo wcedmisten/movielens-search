@@ -1,29 +1,26 @@
-import click
 import decimal
+import json
+
+import click
 import flask
 import psycopg2
 import psycopg2.extras
-
-import json
 
 app = flask.Flask(__name__)
 db = psycopg2.connect("user=postgres password=testpass host=db")
 
 def decimal_default(obj):
+    """Converter used for Decimal -> float conversion in dicts"""
     if isinstance(obj, decimal.Decimal):
         # round to 2 digits
         return round(float(obj), 2)
     raise TypeError
 
-@app.route("/api/movies")
-def test():
-    with db.cursor() as cur:
-        cur.execute("SELECT id, title FROM movies;")
-        result = cur.fetchmany(10)
-        return flask.jsonify(dict(result=result, backend="python"))
-
-
-def search_results_to_dict(result, count):
+def search_results_to_dict(result, total_count):
+    """
+    Returns a structured dictionary of search result queries based on the ordering in the SELECT statement.
+    Also returns the total number of results in the count field (for pagination purposes)
+    """
     res = {}
 
     res['results'] = list(map(lambda item: {
@@ -32,12 +29,23 @@ def search_results_to_dict(result, count):
         'genres': item[2],
         'avg_rating': item[3]
     }, result))
-    res['count'] = count
+    res['count'] = total_count
 
     return res
 
 @app.route("/api/search", methods = ['GET'])
 def search():
+    """
+    Search the movies database given request parameters
+    
+    search_val (str): match results against movie titles using trigram similarity. (See https://www.postgresql.org/docs/9.1/pgtrgm.html)
+    min_rating (float): minimum average rating for the movie, inclusive
+    max_rating (float): maximum average rating for the movie, inclusive
+    genres (str): JSON encoded array of genres to be matched with the movie's genre. NOTE: these are logical ORs with each other.
+    page (int): page number (starting at 1) for paginated results. Uses fixed page size of 10 movies. 
+
+    Returns a JSON response containing the results structured by field, and the count of total results.
+    """
     search_string = str(flask.request.args['search_val'])
     
     min_rating = flask.request.args['min_rating']
@@ -108,6 +116,10 @@ def search():
 
 
 def movie_id_result_to_dict(item):
+    """
+    Returns a structured dictionary of movie data based on the ordering in the SELECT statement.
+    Includes fields: id, title, genre, avg_rating, imdb_id, and tmdb_id
+    """
     return {
         'id': item[0],
         'title': item[1],
@@ -119,6 +131,10 @@ def movie_id_result_to_dict(item):
 
 @app.route("/api/movie/<id>", methods = ['GET'])
 def movie(id):
+    """
+    Returns a JSON encoded object of movie data for movie with id=id.
+    Fields include: id, title, genres, avg_rating, imdb_id (ID for movie on imdb.com), and tmdb_id (ID for movie on themoviedb.org)
+    """
     base_query =    ("SELECT " 
                     "movies.id, movies.title, movies.genres, avg_ratings.avg_rating, links.imdb_id, links.tmdb_id "
                     "FROM "
@@ -136,13 +152,3 @@ def movie(id):
         result = cur.fetchone()
 
         return flask.json.dumps(movie_id_result_to_dict(result), default=decimal_default)
-
-    
-
-
-@app.cli.command("load-movielens")
-def load_movielens():
-    with db.cursor() as cur:
-        cur.execute("SELECT col FROM test;")
-        (result,) = cur.fetchone()
-        click.echo(f"result {result}")

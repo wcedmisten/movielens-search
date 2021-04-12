@@ -31,10 +31,6 @@ stopping:
 If you run into issues connecting to the db on startup, try restarting (without
 the `-v` flag).
 
-To execute the data load cli command:
-
-    docker-compose exec backend flask load-movielens
-
 
 Code changes should trigger live reload of the docker services in the docker
 containers by way of the volume binds specified in the compose file.

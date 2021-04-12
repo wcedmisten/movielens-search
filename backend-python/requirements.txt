@@ -1,2 +1,6 @@
+# src dependencies
 flask
 psycopg2-binary
+
+# test dependencies
+pytest
